@@ -1,0 +1,15 @@
+[submodule "home-manger/packages/dwm/dwm"]
+	path = home-manger/packages/dwm/dwm
+	url = git@github.com:Ba-So/dwm.git
+[submodule "home-manger/packages/dwm/home-manager/packages/dwm/source"]
+	path = home-manger/packages/dwm/home-manager/packages/dwm/source
+	url = git@github.com:Ba-So/dwm.git
+[submodule "home-manger/packages/dwm/source"]
+	path = home-manger/packages/dwm/source
+	url = git@github.com:Ba-So/dwm.git
+[submodule "home-manger/packages/dwmblocks/source"]
+	path = home-manger/packages/dwmblocks/source
+	url = git@github.com:Ba-So/dwmblocks.git
+[submodule "home-manger/packages/st/source"]
+	path = home-manger/packages/st/source
+	url = git@github.com:Ba-So/st.git
