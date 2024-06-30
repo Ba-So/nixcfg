@@ -22,3 +22,6 @@
 [submodule "config/astronvim"]
 	path = config/astronvim
 	url = https://github.com/AstroNvim/template
+[submodule "packages/dwm/source/source"]
+	path = packages/dwm/source/source
+	url = https://github.com/Ba-So/dwm.git
