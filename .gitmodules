@@ -15,7 +15,7 @@
 	url = git@github.com:Ba-So/st.git
 [submodule "packages/dmenu/source"]
 	path = packages/dmenu/source
-	url = git://git.suckless.org/dmenu
+	url = https://github.com/Ba-So/dmenu.git
 [submodule "config/nvim"]
 	path = config/nvim
 	url = https://github.com/AstroNvim/template
@@ -28,3 +28,6 @@
 [submodule "packages/dwm/source"]
 	path = packages/dwm/source
 	url = https://github.com/Ba-So/dwm.git
+[submodule "packages/dwmblocks/source"]
+	path = packages/dwmblocks/source
+	url = https://github.com/Ba-So/dwmblocks.git
