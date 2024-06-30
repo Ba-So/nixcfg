@@ -1,18 +1,18 @@
-{ stdenv, pkgs, libX11, libXinerama, libXft}:
+{ stdenv, pkgs, libX11, pkg-config }:
 with pkgs.lib;
 
 stdenv.mkDerivation rec{
 name = "local-dwmblocks-${version}";
 	version = "0.1.0";
 
-	src = ./source:;
+	src = ./source;
 
 	nativeBuildInputs = [ pkg-config ];
 	buildInputs = [ libX11 ];
 
 	unpackPhase = ''cp -r $src/* .'';
 
-	unpackPhase = ''make'';
+	buildPhase = ''make'';
 
 	installPhase = ''make PREFIX=$out DESTDIR="" install'';
 }

@@ -1,17 +1,19 @@
-{ stdenv, pkgs, libX11, libXinerama, libXft}:
+{ stdenv, pkgs, libX11, libXinerama, libXft, fontconfig, pkg-config, ncurses, harfbuzz }:
 with pkgs.lib;
 
 stdenv.mkDerivation rec{
-name = "local-dwm-${version}";
-	version = "0.8.4";
+  name = "local-dwm-${version}";
+  version = "0.8.4";
 
-	src = ./source:;
+  src = ./source;
 
-	buildInputs = [ libX11 libXft fontconfig ncurses ];
+  nativeBuildInputs = [ pkg-config harfbuzz ];
+  buildInputs = [ libX11 libXft fontconfig ncurses ];
 
-	unpackPhase = ''cp -r $src/* .'';
 
-	unpackPhase = ''make'';
+  unpackPhase = ''cp -r $src/* .'';
 
-	installPhase = ''TERMINFO=$out/share/teminfo make PREFIX=$out DESTDIR="" install'';
+  buildPhase = ''make'';
+
+  installPhase = ''TERMINFO=$out/share/terminfo make PREFIX=$out DESTDIR="" install'';
 }

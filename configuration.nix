@@ -3,11 +3,36 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
+let
+  localPkgs = import ./packages/default.nix { pkgs = pkgs; };
+in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [ 
+    # Include the results of the hardware scan.
+    <home-manager/nixos>
+    ./hardware/greatatuin/default.nix
+    ./packages.nix
+    ./overlays-system.nix
+    ./modules/login.nix
+  ];
+
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowBroken = false;
+  };
+
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    auto-optimise-store = true;
+  };
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+  };
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
 
   # Bootloader.
   boot = {
@@ -18,23 +43,72 @@
     supportedFilesystems = [ "ntfs" ];
   };
 
-  networking.hostName = "GreatAtuin"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  services.udisks2.enable = true;
+  programs.dconf.enable = true;
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  # Bluetooth Stuff
+  hardware.bluetooth.enable = false;
+  services.blueman.enable = false;
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+  home-manager.useGlobalPkgs = true;
+  home-manager.users.baso = { pkgs, ... }:{
+    imports = [ ./home.nix ];
+    home = { stateVersion = "23.05"; };
+  };
 
-  # Enable network manager applet
+  # Configure X11
+  services.xserver = {
+    layout = "de";
+    xkbVariant = "neo";
+    videoDrivers = [ "nvidia" ];
+    enable = true;
+    autorun = false;
+    displayManager.startx.enable = true;
+  };
+  
+  # Only needed for laptops
+  # TODO: move elsewhere
+  # services.libinput = {
+  #  enable = false;
+  #  touchpad = {
+  #    tapping = false;
+  #    naturalScrolling = false;
+  #  };
+  #};
+
+  # Fonts
+  fonts.packages = with pkgs; [
+    # jetbrains-mono
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    cozette
+    noto-fonts-emoji
+  ];
+
+  # Enable sound.
+  sound.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    jack.enable = true;
+    wireplumber.enable = true;
+  };
+
+  # Networking
+
+  networking = {
+    hostName = "GreatAtuin"; # Define your hostname.
+    networkmanager.enable = true;
+  };
   programs.nm-applet.enable = true;
 
-  # Set your time zone.
+  # Locale Stuff
+  ## TODO: move elsewhere
+  ## Set your time zone.
   time.timeZone = "Europe/Berlin";
 
-  # Select internationalisation properties.
+  ## Select internationalisation properties.
   i18n.defaultLocale = "de_DE.UTF-8";
 
   i18n.extraLocaleSettings = {
@@ -49,42 +123,13 @@
     LC_TIME = "de_DE.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver = {
-    layout = "de";
-    xkbVariant = "neo";
-    videoDrivers = [ "nvidia" ];
-    enable = true;
-    # enable lightdm & lxqt for lxqt
-    # enable startx & dwm for dwm
-    displayManager.lightdm.enable = false;
-    desktopManager.lxqt.enable = false;
-    autorun = true;
-    # windowManager.dwm = {
-    #  enable = true;
-    #  package = pkgs.dwm.overrideAttrs {
-    #    src = /home/baso/.local/src/dwm;
-    #  };
-    # };
-    displayManager = { 
-      xserverArgs = [
-        "-verbose"
-        "-logverbose"
-      ];
-      startx.enable = true;
-    };
-  };
-
-  # Configure console keymap
+  ## Configure console keymap
   console.keyMap = "neo";
 
-  # Enable CUPS to print documents.
+  ## Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Enable sound with pipewire.
-  sound.enable = true;
   hardware = {
-    pulseaudio.enable = false;
     opengl = {
       enable = true;
       driSupport = true;
@@ -102,110 +147,8 @@
       };
     };
   };
-  
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
 
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
-  #services.udisks2.enable = true;
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.defaultUserShell = pkgs.zsh;
-  users.users.baso = {
-    isNormalUser = true;
-    description = "Baso";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      firefox
-      evolution
-      steam
-      discord
-      keepassxc
-      spotify
-      gnucash
-    ];
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-     xorg.xinit
-     git
-     st
-     wget
-     webkitgtk
-  ];
-	
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-  };
-
-  programs.gamemode = {
-    enable = true;
-  };
-  
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-  };
-
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-    shellAliases = {
-      update = "sudo nixos-rebuild switch";
-    };
-    interactiveShellInit = ''
-      if status is-login
-        if test -z "$DISPLAY" -a "$XDG_VTNR" = 1
-	  source ~/.zprofile
-	end
-      end
-      ''
-    ;
-  };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
+  environment.localBinInPath = true;
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

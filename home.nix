@@ -1,74 +1,71 @@
-{ config, pkgs, ... }:
+{ config, pkgs, epkgs, lib, ... }:
+let
+  localPkgs = import ./packages/default.nix { pkgs = pkgs; };
+in
 {
+  imports = [
+    ./overlays-home.nix
+    ./modules/git.home.nix
+  ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "baso";
   home.homeDirectory = "/home/baso";
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "23.11"; # Please read the comment before changing.
+  home.packages = with pkgs; [
+  ];
 
+  services.unclutter = {
+    enable = true;
+    timeout = 5;
+  };
 
+  services.udiskie = {
+    enable = true;
+    automount = true;
+    notify = true;
+    tray = "never";
+  }; 
+  systemd.user.services.udiskie = {
+    Install.WantedBy = lib.mkForce [ "default.target" ];
+    Unit.After = lib.mkForce [ "udisks2.service" ];
+  };
+  programs.password-store = {
+    enable = true;
+    package = pkgs.pass.withExtensions (exts: [ exts.pass-otp ]);
+    settings = {
+      PASSWORD_STORE_DIR = "~/.config/password-store";
+    };
+  };
+
+  services.gpg-agent = {
+    enable = true;
+    maxCacheTtl = 864000;
+    defaultCacheTtl = 864000;
+    enableSshSupport = false;
+    pinentryFlavor = "qt";
+    # pinentryFlavor = null;
+    # extraConfig = ''
+    #   pinentry-program ${localPkgs.anypinentry}/bin/anypinentry
+    # '';
+  };
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
-    pkgs.tmux
-    pkgs.htop
-    pkgs.st
-    pkgs.zsh
-  #  pkgs.dwm
-    pkgs.xcompmgr
-    pkgs.dunst
-    pkgs.unclutter
-    pkgs.texlive.combined.scheme-full
-    pkgs.zathura
-    pkgs.calibre
-    pkgs.libreoffice
-    pkgs.tigervnc
-    pkgs.remmina
-    pkgs.dconf
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-  ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-    ".vimrc".source = ./vimrc;
-    ".config/shell" = {
-      source = dotfiles/shell;
-      recursive = true;
-    };
-    ".config/x11" = {
-      source = dotfiles/x11;
-      recursive = true;
-    };
     ".config/zsh" = {
-      source = dotfiles/zsh;
+      source = ./config/zsh;
       recursive = true;
+    };
+    ".zshrc" = {
+      source = ./config/zsh/zshrc;
     };
     ".local/bin" = {
-      source = ./scripts;
+      source = ./config/scripts;
       recursive = true;
     };
-    ".xprofile".source = dotfiles/x11/xprofile;
-    ".zprofile".source = dotfiles/shell/profile;
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
@@ -80,31 +77,14 @@
     #   org.gradle.daemon.idletimeout=3600000
     # '';
   };
-
-  programs.git = {
-    enable = true;
-    userName = "bastian sommerfeld";
-    userEmail = "bastian.sommerfeld@gmail.com";
-    aliases = {
-     st = "status";
+  xdg.configFile = {
+    astronvim = {
+      onChange = "nvim --headless -c 'if exists(\":LuaCacheClear\") | :LuaCacheClear' +quitall";
+      source = ./config/astronvim;
+    };
+    nvim = {
+      onChange = "nvim --headless -c 'if exists(\":LuaCacheClear\") | :LuaCacheClear' +quitall";
+      source = ./config/nvim; 
     };
   };
-
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. If you don't want to manage your shell through Home
-  # Manager then you have to manually source 'hm-session-vars.sh' located at
-  # either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/baso/etc/profile.d/hm-session-vars.sh
-  #
-  home.sessionVariables = {
-    # EDITOR = "emacs";
-  };
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
 }

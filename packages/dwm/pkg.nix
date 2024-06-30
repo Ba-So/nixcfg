@@ -1,17 +1,17 @@
-{ stdenv, pkgs, libX11, libXinerama, libXft}:
+{ stdenv, pkgs, libX11, libXinerama, libXft, harfbuzz, pkg-config }:
 with pkgs.lib;
 
 stdenv.mkDerivation rec{
 name = "local-dwm-${version}";
 	version = "6.4.x";
 
-	src = ./source:;
+	src = ./source;
 
-	buildInputs = [libX11 libXinerama libXft];
+	buildInputs = [ libX11 libXinerama libXft pkg-config ];
 
 	unpackPhase = ''cp -r $src/* .'';
 
-	unpackPhase = ''make clean dwm'';
+	buildPhase = ''make clean dwm'';
 
 	installPhase = ''make PREFIX=$out DESTDIR="" install'';
 }

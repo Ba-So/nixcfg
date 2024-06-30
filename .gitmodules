@@ -13,3 +13,12 @@
 [submodule "home-manger/packages/st/source"]
 	path = home-manger/packages/st/source
 	url = git@github.com:Ba-So/st.git
+[submodule "packages/dmenu/source"]
+	path = packages/dmenu/source
+	url = git://git.suckless.org/dmenu
+[submodule "config/nvim"]
+	path = config/nvim
+	url = https://github.com/AstroNvim/template
+[submodule "config/astronvim"]
+	path = config/astronvim
+	url = https://github.com/AstroNvim/template
