@@ -62,9 +62,11 @@ in
     xkbVariant = "neo";
     videoDrivers = [ "nvidia" ];
     enable = true;
-    autorun = false;
+    autorun = true;
     displayManager.startx.enable = true;
   };
+  
+  programs.slock.enable = true;
   
   # Only needed for laptops
   # TODO: move elsewhere
