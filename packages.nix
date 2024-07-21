@@ -52,6 +52,7 @@ let
     xorg.xkill
     xcompmgr
     arandr
+    slock
   ];
 in
 {
