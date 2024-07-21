@@ -24,6 +24,7 @@ let
     calibre
     libreoffice
     texlive.combined.scheme-full
+    keepassxc
   ];
 
   utilPackages = with pkgs; [
@@ -33,9 +34,12 @@ let
     wget
     killall
     htop
+    pstree
     wineWowPackages.stable
     pkgs.steam-run
     webkitgtk
+
+    pulsemixer
 
     dconf
 
