@@ -25,6 +25,7 @@ let
     libreoffice
     texlive.combined.scheme-full
     keepassxc
+    obsidian
   ];
 
   utilPackages = with pkgs; [
@@ -52,7 +53,6 @@ let
     xorg.xkill
     xcompmgr
     arandr
-    slock
   ];
 in
 {
