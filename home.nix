@@ -1,6 +1,7 @@
 { config, pkgs, epkgs, lib, ... }:
 let
   localPkgs = import ./packages/default.nix { pkgs = pkgs; };
+  sources = import ./nix/sources.nix;
 in
 {
   imports = [
@@ -37,6 +38,9 @@ in
       PASSWORD_STORE_DIR = "~/.config/password-store";
     };
   };
+  programs.neovim.plugins = [
+    pkgs.vimPlugins.nvim-treesitter
+  ];
 
   services.gpg-agent = {
     enable = true;
@@ -84,7 +88,7 @@ in
     };
     nvim = {
       onChange = "nvim --headless -c 'if exists(\":LuaCacheClear\") | :LuaCacheClear' +quitall";
-      source = ./config/nvim; 
+      source = sources.template; 
     };
   };
 }

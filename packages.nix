@@ -11,6 +11,7 @@ let
 
   devPackages = with pkgs; [
     neovim
+    nodejs
   ];
 
   appPackages = with pkgs; [
@@ -45,6 +46,11 @@ let
     dconf
 
     dunst
+    
+    ripgrep
+    lazygit
+    bottom
+    gdu
 
     # X stuff
     xorg.xinit
@@ -53,12 +59,13 @@ let
     xorg.xkill
     xcompmgr
     arandr
+    niv
   ];
 in
 {
   environment.systemPackages = devPackages ++ customPackages ++ appPackages ++ utilPackages;
   nixpkgs.config.permittedInsecurePackages = [
-    # empty for now
+    "electron-25.9.0"
   ];
 
   programs.steam = {
