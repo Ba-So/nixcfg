@@ -37,6 +37,8 @@ let
     killall
     htop
     pstree
+    file
+    libnotify
     wineWowPackages.stable
     pkgs.steam-run
     webkitgtk
