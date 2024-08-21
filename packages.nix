@@ -39,6 +39,8 @@ let
     pstree
     file
     libnotify
+    xwallpaper
+    xdotool
     wineWowPackages.stable
     pkgs.steam-run
     webkitgtk
