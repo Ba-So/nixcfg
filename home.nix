@@ -63,6 +63,13 @@ in
       source = ./config/zsh;
       recursive = true;
     };
+    ".config/x11" = {
+      source = ./config/x11;
+      recursive = true;
+    };
+    ".xprofile" = {
+      source = ./config/x11/xprofile;
+    };
     ".zshrc" = {
       source = ./config/zsh/zshrc;
     };

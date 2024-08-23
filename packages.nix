@@ -38,12 +38,12 @@ let
     htop
     pstree
     file
+    bluez
     libnotify
     xwallpaper
     xdotool
     wineWowPackages.stable
     pkgs.steam-run
-    webkitgtk
 
     pulsemixer
 

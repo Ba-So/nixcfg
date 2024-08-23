@@ -59,3 +59,8 @@ alias \
 	magit="nvim -c MagitOnly" \
 	ref="shortcuts >/dev/null; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" \
 	weath="less -S ${XDG_CACHE_HOME:-$HOME/.cache}/weatherreport" \
+
+# To make Plots in GnuCash work
+# https://github.com/NixOS/nixpkgs/issues/288641
+alias \
+  gnucash="WEBKIT_DISABLE_COMOSITING_MODE=1 gnucash"

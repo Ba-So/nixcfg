@@ -45,25 +45,7 @@ in
     histSize = 50000;
     interactiveShellInit = ''source ~/.config/zsh/zshrc'';
     promptInit = "";
-    loginShellInit = with builtins; let
-      cases = map
-        (
-	  s: ''
-	    /dev/${elemAt s 0})
-	    echo "~/.config/xorg/init.sh; ${elemAt s 1}" > ~/.xinitrc;
-	    sleep 0.2;
-	    startx;
-	    ;;
-          ''
-	)
-	sessions;
-    in
-    ''
-      case "$(tty)" in
-        ${toString cases}
-	*) echo "Only tty for you, $(tty)" ;;
-      esac;
-    '';
+    loginShellInit = "startx ~/.config/x11/xinitrc";
   };
   services = {
     getty = {

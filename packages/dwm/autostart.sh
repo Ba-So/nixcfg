@@ -67,7 +67,9 @@ echo "[Autostart]: Checking applications";
 applications() {
   sleep 0.5;
 
-  run "dwmblocks" dwmblocks;
+#  run "dwmblocks" dwmblocks;
+  on_startup dwmblocks;
+  on_startup setbg;
 
   #on_startup sidekick;
 

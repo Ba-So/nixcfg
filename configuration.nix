@@ -47,8 +47,9 @@ in
   programs.dconf.enable = true;
 
   # Bluetooth Stuff
-  hardware.bluetooth.enable = false;
-  services.blueman.enable = false;
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
 
   home-manager.useGlobalPkgs = true;
   home-manager.users.baso = { pkgs, ... }:{
@@ -62,12 +63,17 @@ in
     xkbVariant = "neo";
     videoDrivers = [ "nvidia" ];
     enable = true;
-    autorun = true;
+    autorun = false;
     displayManager.startx.enable = true;
   };
   
   programs.slock.enable = true;
   
+  programs.bash.shellAliases = {
+    # To make Plots in GnuCash work
+    # https://github.com/NixOS/nixpkgs/issues/288641
+    gnucash="WEBKIT_DISABLE_COMOSITING_MODE=1 gnucash";
+  };
   # Only needed for laptops
   # TODO: move elsewhere
   # services.libinput = {
