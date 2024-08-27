@@ -56,6 +56,8 @@ in
     imports = [ ./home.nix ];
     home = { stateVersion = "23.05"; };
   };
+  
+  users.users.baso.extraGroups = [ "scanner" "lp" ];
 
   # Configure X11
   services.xserver = {
@@ -135,9 +137,17 @@ in
   console.keyMap = "neo";
 
   ## Enable CUPS to print documents.
-  services.printing.enable = true;
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.hplip ];
+  };
+
 
   hardware = {
+    sane = {
+      enable = true;
+      extraBackends = [ pkgs.hplipWithPlugin ];
+    };
     opengl = {
       enable = true;
       driSupport = true;
