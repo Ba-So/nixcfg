@@ -12,6 +12,13 @@ let
   devPackages = with pkgs; [
     neovim
     nodejs
+    #Python
+    python3
+    pipx
+    poetry
+    #C
+    #Rust
+    #...
   ];
 
   appPackages = with pkgs; [
@@ -27,6 +34,10 @@ let
     texlive.combined.scheme-full
     keepassxc
     obsidian
+    #evolution
+    paperwork
+    ausweisapp
+    ranger
   ];
 
   utilPackages = with pkgs; [

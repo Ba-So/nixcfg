@@ -41,13 +41,17 @@ in
   programs.neovim.plugins = [
     pkgs.vimPlugins.nvim-treesitter
   ];
+  programs.gpg = {
+    enable = true;
+  };
+
 
   services.gpg-agent = {
     enable = true;
     maxCacheTtl = 864000;
     defaultCacheTtl = 864000;
     enableSshSupport = false;
-    pinentryFlavor = "qt";
+    pinentryPackage = pkgs.pinentry-qt;
     # pinentryFlavor = null;
     # extraConfig = ''
     #   pinentry-program ${localPkgs.anypinentry}/bin/anypinentry
