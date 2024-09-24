@@ -16,9 +16,8 @@ let
     python3
     pipx
     poetry
-    #C
-    #Rust
-    #...
+    gcc
+    rustup
   ];
 
   appPackages = with pkgs; [
