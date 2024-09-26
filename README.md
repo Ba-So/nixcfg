@@ -34,16 +34,6 @@ Contrived technical documentation is my enemy and the NixOS documentation is awe
   - this is where I pieced this repository together from.
   - I just attempt to add the documentation alongside it.
 
-### Note on LARBS
-(feeling opinionated, might remove later)
-  
-I really feel unsure about Lukes political views, especially the wording and iconography he uses.
-My interpretation of his work on LARBS is that he wanted to make linux and it's endless configurability more aproachable.
-Anything that distracts from this idea, hurts it. It is difficult to make something that is percieved as elitist and nerdy approachable,
-while cladding it in a thick layer of edgyness.   
-  
-But I strongly adhere to [politics is the mindkiller](https://www.lesswrong.com/posts/9weLK2AJ9JEt2Tt8f/politics-is-the-mind-killer) his original idea is great and deserves praise.
-
 ## Principles
   
 **Keep it Simple & Stupid**  
