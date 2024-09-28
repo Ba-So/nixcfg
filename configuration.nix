@@ -57,7 +57,7 @@ in
     home = { stateVersion = "23.05"; };
   };
   
-  users.users.baso.extraGroups = [ "scanner" "lp" ];
+  users.users.baso.extraGroups = [ "scanner" "lp" "docker"];
 
   # Configure X11
   services.xserver = {
