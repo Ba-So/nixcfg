@@ -168,7 +168,7 @@ in
     };
   };
 
-  virtualization.docker.enable = true
+  virtualisation.docker.enable = true;
 
   environment.localBinInPath = true;
   # This value determines the NixOS release from which the default
