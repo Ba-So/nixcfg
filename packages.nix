@@ -18,6 +18,8 @@ let
     poetry
     gcc
     rustup
+    docker
+    docker-compose
   ];
 
   appPackages = with pkgs; [
@@ -37,6 +39,7 @@ let
     paperwork
     ausweisapp
     ranger
+    signal-desktop
   ];
 
   utilPackages = with pkgs; [
