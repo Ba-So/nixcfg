@@ -11,7 +11,7 @@ let
 
   devPackages = with pkgs; [
     neovim
-    nodejs
+    direnv
     #Python
     python3
     pipx
@@ -35,6 +35,7 @@ let
     texlive.combined.scheme-full
     keepassxc
     obsidian
+    thunderbird
     #evolution
     paperwork
     ausweisapp
@@ -68,6 +69,7 @@ let
     lazygit
     bottom
     gdu
+    tree
 
     # X stuff
     xorg.xinit
