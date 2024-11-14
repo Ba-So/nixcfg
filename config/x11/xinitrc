@@ -15,4 +15,4 @@ else
 fi
 # Activate dbus variables
 dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY || true;
-dbus-launch ssh-agent dwm
+dbus-launch ssh-agent dwm > /tmp/dwm-autostart-logs.log
