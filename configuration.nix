@@ -1,13 +1,14 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, ... }:
-let
-  localPkgs = import ./packages/default.nix { pkgs = pkgs; };
-in
 {
-  imports = [ 
+  config,
+  pkgs,
+  ...
+}: let
+  localPkgs = import ./packages/default.nix {pkgs = pkgs;};
+in {
+  imports = [
     # Include the results of the hardware scan.
     <home-manager/nixos>
     ./hardware-configuration.nix #/greatatuin/default.nix
@@ -21,18 +22,20 @@ in
     allowBroken = false;
   };
 
-  nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
-    auto-optimise-store = true;
+  nix = {
+    settings = {
+      experimental-features = ["nix-command" "flakes"];
+      auto-optimise-store = true;
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+    };
+    extraOptions = ''
+      keep-outputs = true
+      keep-derivations = true
+    '';
   };
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-  };
-  nix.extraOptions = ''
-    keep-outputs = true
-    keep-derivations = true
-  '';
 
   # Bootloader.
   boot = {
@@ -40,44 +43,58 @@ in
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    supportedFilesystems = [ "ntfs" ];
+    supportedFilesystems = ["ntfs"];
   };
 
-  services.udisks2.enable = true;
-  programs.dconf.enable = true;
-
-  # Bluetooth Stuff
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  services.blueman.enable = true;
-
-  home-manager.useGlobalPkgs = true;
-  home-manager.users.baso = { pkgs, ... }:{
-    imports = [ ./home.nix ];
-    home = { stateVersion = "23.05"; };
-  };
-  
-  users.users.baso.extraGroups = [ "scanner" "lp" "docker"];
-
-  # Configure X11
-  services.xserver = {
-    xkb = {
-      layout = "de";
-      variant = "neo";
+  services = {
+    udisks2.enable = true;
+    blueman.enable = true;
+    # Configure X11
+    xserver = {
+      xkb = {
+        layout = "de";
+        variant = "neo";
+      };
+      videoDrivers = ["nvidia"];
+      enable = true;
+      autorun = false;
+      displayManager.startx.enable = true;
     };
-    videoDrivers = [ "nvidia" ];
-    enable = true;
-    autorun = false;
-    displayManager.startx.enable = true;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      jack.enable = true;
+      wireplumber.enable = true;
+    };
+    printing = {
+      enable = true;
+      drivers = [pkgs.hplipWithPlugin];
+    };
   };
-  
-  programs.slock.enable = true;
-  
-  programs.bash.shellAliases = {
-    # To make Plots in GnuCash work
-    # https://github.com/NixOS/nixpkgs/issues/288641
-    gnucash="WEBKIT_DISABLE_COMOSITING_MODE=1 gnucash";
+
+  programs = {
+    dconf.enable = true;
+    slock.enable = true;
+
+    bash.shellAliases = {
+      # To make Plots in GnuCash work
+      # https://github.com/NixOS/nixpkgs/issues/288641
+      gnucash = "WEBKIT_DISABLE_COMOSITING_MODE=1 gnucash";
+    };
   };
+
+  home-manager = {
+    useGlobalPkgs = true;
+    users.baso = {pkgs, ...}: {
+      imports = [./home.nix];
+      home = {stateVersion = "23.05";};
+    };
+  };
+
+  users.users.baso.extraGroups = ["scanner" "lp" "docker"];
+
   # Only needed for laptops
   # TODO: move elsewhere
   # services.libinput = {
@@ -91,7 +108,7 @@ in
   # Fonts
   fonts.packages = with pkgs; [
     # jetbrains-mono
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    (nerdfonts.override {fonts = ["JetBrainsMono"];})
     cozette
     noto-fonts-emoji
   ];
@@ -99,13 +116,6 @@ in
   # Enable sound.
   sound.enable = false;
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    jack.enable = true;
-    wireplumber.enable = true;
-  };
 
   # Networking
 
@@ -121,34 +131,30 @@ in
   time.timeZone = "Europe/Berlin";
 
   ## Select internationalisation properties.
-  i18n.defaultLocale = "de_DE.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "de_DE.UTF-8";
-    LC_IDENTIFICATION = "de_DE.UTF-8";
-    LC_MEASUREMENT = "de_DE.UTF-8";
-    LC_MONETARY = "de_DE.UTF-8";
-    LC_NAME = "de_DE.UTF-8";
-    LC_NUMERIC = "de_DE.UTF-8";
-    LC_PAPER = "de_DE.UTF-8";
-    LC_TELEPHONE = "de_DE.UTF-8";
-    LC_TIME = "de_DE.UTF-8";
+  i18n = {
+    defaultLocale = "de_DE.UTF-8";
+    extraLocaleSettings = {
+      LC_ADDRESS = "de_DE.UTF-8";
+      LC_IDENTIFICATION = "de_DE.UTF-8";
+      LC_MEASUREMENT = "de_DE.UTF-8";
+      LC_MONETARY = "de_DE.UTF-8";
+      LC_NAME = "de_DE.UTF-8";
+      LC_NUMERIC = "de_DE.UTF-8";
+      LC_PAPER = "de_DE.UTF-8";
+      LC_TELEPHONE = "de_DE.UTF-8";
+      LC_TIME = "de_DE.UTF-8";
+    };
   };
 
   ## Configure console keymap
   console.keyMap = "neo";
 
   ## Enable CUPS to print documents.
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.hplipWithPlugin ];
-  };
-
 
   hardware = {
     sane = {
       enable = true;
-      extraBackends = [ pkgs.hplipWithPlugin ];
+      extraBackends = [pkgs.hplipWithPlugin];
     };
     opengl = {
       enable = true;
@@ -163,9 +169,13 @@ in
       modesetting.enable = true;
       powerManagement = {
         enable = false;
-	finegrained = false;
+        finegrained = false;
       };
     };
+    pulseaudio.enable = true;
+    # Bluetooth Stuff
+    bluetooth.enable = true;
+    bluetooth.powerOnBoot = true;
   };
 
   virtualisation.docker.enable = true;
