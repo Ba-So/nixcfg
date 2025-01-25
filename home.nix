@@ -2,61 +2,77 @@
 let
   localPkgs = import ./packages/default.nix { pkgs = pkgs; };
   sources = import ./nix/sources.nix;
+  nixvim = import (builtins.fetchGit {
+    url = "https://github.com/nix-community/nixvim";
+  });
 in
 {
   imports = [
+    nixvim.homeManagerModules.nixvim
     ./overlays-home.nix
     ./modules/git.home.nix
   ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "baso";
-  home.homeDirectory = "/home/baso";
-
-  home.packages = with pkgs; [
-  ];
-
-  services.unclutter = {
-    enable = true;
-    timeout = 5;
+  home = {
+    username = "baso";
+    homeDirectory = "/home/baso";
+    packages = with pkgs; [];
   };
+  
+  services = {
 
-  services.udiskie = {
-    enable = true;
-    automount = true;
-    notify = true;
-    tray = "never";
-  }; 
+    unclutter = {
+      enable = true;
+      timeout = 5;
+    };
+
+    udiskie = {
+      enable = true;
+      automount = true;
+      notify = true;
+      tray = "never";
+    }; 
+
+    gpg-agent = {
+      enable = true;
+      maxCacheTtl = 864000;
+      defaultCacheTtl = 864000;
+      enableSshSupport = false;
+      pinentryPackage = pkgs.pinentry-qt;
+      # pinentryFlavor = null;
+      # extraConfig = ''
+      #   pinentry-program ${localPkgs.anypinentry}/bin/anypinentry
+      # '';
+    };
+  };
+  
+
   systemd.user.services.udiskie = {
     Install.WantedBy = lib.mkForce [ "default.target" ];
     Unit.After = lib.mkForce [ "udisks2.service" ];
   };
-  programs.password-store = {
-    enable = true;
-    package = pkgs.pass.withExtensions (exts: [ exts.pass-otp ]);
-    settings = {
-      PASSWORD_STORE_DIR = "~/.config/password-store";
+
+  programs = {
+    password-store = {
+      enable = true;
+      package = pkgs.pass.withExtensions (exts: [ exts.pass-otp ]);
+      settings = {
+        PASSWORD_STORE_DIR = "~/.config/password-store";
+      };
     };
-  };
-  programs.neovim.plugins = [
-    pkgs.vimPlugins.nvim-treesitter
-  ];
-  programs.gpg = {
-    enable = true;
+
+    neovim.plugins = [
+      pkgs.vimPlugins.nvim-treesitter
+    ];
+
+    gpg = {
+      enable = true;
+    };
+
   };
 
 
-  services.gpg-agent = {
-    enable = true;
-    maxCacheTtl = 864000;
-    defaultCacheTtl = 864000;
-    enableSshSupport = false;
-    pinentryPackage = pkgs.pinentry-qt;
-    # pinentryFlavor = null;
-    # extraConfig = ''
-    #   pinentry-program ${localPkgs.anypinentry}/bin/anypinentry
-    # '';
-  };
   # The home.packages option allows you to install Nix packages into your
   # environment.
 
@@ -80,6 +96,9 @@ in
     ".local/bin" = {
       source = ./config/scripts;
       recursive = true;
+    };
+    ".gconf.path" = {
+      text = "xml:readonly:$(HOME)/.nix-profile/etc/gconf/gconf.xml.defaults/";
     };
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a

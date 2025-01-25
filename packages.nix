@@ -41,6 +41,9 @@ let
     ausweisapp
     ranger
     signal-desktop
+    clockify
+    anki
+    typora
   ];
 
   utilPackages = with pkgs; [

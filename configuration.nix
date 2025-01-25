@@ -49,6 +49,11 @@ in {
   services = {
     udisks2.enable = true;
     blueman.enable = true;
+    dbus = {
+      # fully enables programms that use GConf 
+      # c.f. https://releases.nixos.org/nix-dev/2011-July/006385.html
+      packages = [ pkgs.gnome2.GConf ];
+    };
     # Configure X11
     xserver = {
       xkb = {
@@ -83,6 +88,8 @@ in {
       # https://github.com/NixOS/nixpkgs/issues/288641
       gnucash = "WEBKIT_DISABLE_COMOSITING_MODE=1 gnucash";
     };
+
+    nm-applet.enable = true;
   };
 
   home-manager = {
@@ -114,7 +121,6 @@ in {
   ];
 
   # Enable sound.
-  sound.enable = false;
   security.rtkit.enable = true;
 
   # Networking
@@ -123,7 +129,6 @@ in {
     hostName = "GreatAtuin"; # Define your hostname.
     networkmanager.enable = true;
   };
-  programs.nm-applet.enable = true;
 
   # Locale Stuff
   ## TODO: move elsewhere
@@ -172,7 +177,6 @@ in {
         finegrained = false;
       };
     };
-    pulseaudio.enable = true;
     # Bluetooth Stuff
     bluetooth.enable = true;
     bluetooth.powerOnBoot = true;
