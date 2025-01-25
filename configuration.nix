@@ -11,7 +11,7 @@ in {
   imports = [
     # Include the results of the hardware scan.
     <home-manager/nixos>
-    ./hardware-configuration.nix #/greatatuin/default.nix
+    ./hardware-configuration.nix #/hardware/greatatuin/default.nix
     ./packages.nix
     ./overlays-system.nix
     ./modules/login.nix

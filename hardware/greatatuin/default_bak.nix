@@ -8,7 +8,7 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
@@ -17,17 +17,10 @@
     { device = "/dev/disk/by-uuid/d8079657-7015-47dc-a7aa-db2f0b362e8d";
       fsType = "ext4";
     };
-  
-  fileSystems."/data" =
-    { device = "/dev/disk/by-uuid/A204E3E404E3BA05";
-      fsType = "ntfs";
-      options = ["umask=22" "uid=1000" "gid=1000" "allow_other" "defaults" "auto_unmount"];
-    };
 
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/9FAE-6FE1";
       fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
     };
 
   swapDevices =
@@ -44,5 +37,4 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 }
